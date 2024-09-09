@@ -13,3 +13,4 @@ class User(Base):
     name: Mapped[str] = mapped_column(String(200))
     email: Mapped[str] = mapped_column(String(50))
     password_hash: Mapped[str] = mapped_column(String(60))
+    is_active: Mapped[bool] = mapped_column(default=False)
