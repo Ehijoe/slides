@@ -1,6 +1,6 @@
 from uuid import UUID, uuid4
 
-from sqlalchemy import String
+from sqlalchemy import String, Boolean
 from sqlalchemy.orm import Mapped, mapped_column
 
 from backend.src.base_model import Base
