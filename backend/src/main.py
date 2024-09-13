@@ -1,25 +1,9 @@
-from backend.src.auth import utils, models, schemas
-from backend.src.auth.utils import get_users
-from .base_model import SessionLocal, engine
+from fastapi import FastAPI, HTTPException
 
-from fastapi import Depends, FastAPI, HTTPException
-from typing import Annotated
-
-from sqlalchemy.orm import Session
-
-
-models.Base.metadata.create_all(bind=engine)
+from backend.src.auth import utils, schemas
+from backend.src.database import DBSession
 
 app = FastAPI()
-
-
-# Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 @app.get("/")
@@ -28,7 +12,7 @@ async def root():
 
 
 @app.post("/signup/", response_model=schemas.User)
-async def signup(user: schemas.UserCreate, db: Session = Depends(get_db)):
+async def signup(user: schemas.UserCreate, db: DBSession):
     # Ensure user has not logged in before
     db_user = utils.get_user_by_email(db, email=user.email)
     if db_user:
