@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 
 from backend.src.database import DBSession
 
-from .crud import get_user_by_email, create_user
+from .service import get_user_by_email, create_user
 from .schemas import User, UserCreate
 
 router = APIRouter()
