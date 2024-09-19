@@ -1,6 +1,10 @@
-from fastapi import HTTPException
+from uuid import uuid4
 
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
+
+from backend.src.redis import RedisClient
+from backend.src import config
 
 from . import models, schemas
 from .utils import hash_password
@@ -17,7 +21,7 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.User).offset(skip).limit(limit).all()
 
 
-def create_user(db: Session, user: schemas.UserCreate):
+def create_user(db: Session, user: schemas.UserCreate, redis_client: RedisClient):
     
     db_user = get_user_by_email(db, email=user.email)
 
@@ -33,5 +37,8 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+
+    confirmation_token = uuid4()
+    redis_client.set(":".join([config.REDIS_APP_PREFIX, "confirmation", confirmation_token]), db_user.id)
 
     return db_user
