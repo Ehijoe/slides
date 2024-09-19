@@ -7,13 +7,13 @@ from backend.src.redis import RedisClient
 from backend.src import config
 
 from . import models, schemas
-from .utils import hash_password
+from .utils import hash_password, verify_password, create_jwt
 
-def get_user(db: Session, user_id: int):
+def get_user(db: Session, user_id: int) -> models.User:
     return db.query(models.User).filter(models.User.id == user_id).first()
 
 
-def get_user_by_email(db: Session, email: str):
+def get_user_by_email(db: Session, email: str) -> models.User:
     return db.query(models.User).filter(models.User.email == email).first()
 
 
@@ -42,3 +42,13 @@ def create_user(db: Session, user: schemas.UserCreate, redis_client: RedisClient
     redis_client.set(":".join([config.REDIS_APP_PREFIX, "confirmation", confirmation_token]), db_user.id)
 
     return db_user
+
+
+def login_user(email: str, password: str, db: Session) -> str:
+    user = get_user_by_email(db, email)
+    if user is None or not verify_password(password, user.password_hash):
+        raise HTTPException(status_code=400, detail="Invalid login")
+    if not user.is_active:
+        raise HTTPException(status_code=400, detail="Account inactive")
+    jwt = create_jwt(user)
+    return jwt

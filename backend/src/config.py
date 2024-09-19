@@ -10,3 +10,5 @@ DB_CONNECTION_ARGS = {
 REDIS_HOST = os.getenv("REDIS_HOST") or "127.0.0.1"
 REDIS_PORT = os.getenv("REDIS_PORT") or "6379"
 REDIS_APP_PREFIX = "slides"
+
+APP_SECRET = os.getenv("APP_SECRET") or "insecure_secret"

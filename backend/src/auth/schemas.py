@@ -5,6 +5,13 @@ class UserBase(BaseModel):
     name: str
     email: EmailStr
 
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+class LoginResponse(BaseModel):
+    token: str
+
 class UserCreate(UserBase):
     password: str
     password_confirm: str

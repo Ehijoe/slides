@@ -1,14 +1,21 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 
 from backend.src.database import DBSession
+from backend.src.redis import RedisClient
 
-from .service import get_user_by_email, create_user
-from .schemas import User, UserCreate
+from .service import create_user, login_user
+from .schemas import User, UserCreate, LoginRequest, LoginResponse
 
 router = APIRouter()
 
 
 @router.post("/signup/", response_model=User)
-async def signup(user: UserCreate, db: DBSession) -> User:
+async def signup(user: UserCreate, db: DBSession, redis_client: RedisClient) -> User:
     
-    return create_user(db=db, user=user)
+    return create_user(db=db, user=user, redis_client=redis_client)
+
+
+@router.post("/login", response_model=LoginResponse)
+async def login(login_request: LoginRequest, db: DBSession) -> LoginResponse:
+    jwt = login_user(login_request.email, login_request.password, db)
+    return LoginResponse(token=jwt)
