@@ -1,0 +1,4 @@
+Dear {{name}},
+
+Welcome to Slides! Click the link below to activate your account:
+{{confirmation_url}}
