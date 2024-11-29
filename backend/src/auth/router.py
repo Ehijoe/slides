@@ -4,7 +4,8 @@ from backend.src.database import DBSession
 from backend.src.redis import RedisClient
 
 from .service import create_user, login_user
-from .schemas import User, UserCreate, LoginRequest, LoginResponse
+from .schemas import User, UserCreate, LoginRequest, LoginResponse, UserBase
+from .dependencies import CurrentUser
 
 router = APIRouter()
 
@@ -19,3 +20,8 @@ async def signup(user: UserCreate, db: DBSession, redis_client: RedisClient) -> 
 async def login(login_request: LoginRequest, db: DBSession) -> LoginResponse:
     jwt = login_user(login_request.email, login_request.password, db)
     return LoginResponse(token=jwt)
+
+
+@router.get("/me")
+async def get_current_user(user: CurrentUser):
+    return UserBase(name=user.name, email=user.email)

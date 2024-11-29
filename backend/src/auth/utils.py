@@ -28,3 +28,7 @@ def create_jwt(user: User) -> str:
     }
     token = jwt.encode(payload, key=config.APP_SECRET, algorithm="HS256")
     return token
+
+
+def decode_jwt(user_jwt: str):
+    return jwt.decode(user_jwt, key=config.APP_SECRET, verify=True, algorithms=["HS256"])
