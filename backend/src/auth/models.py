@@ -1,7 +1,8 @@
+from typing import List
 from uuid import UUID, uuid4
 
 from sqlalchemy import String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from backend.src.base_model import Base
 
@@ -14,3 +15,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(50))
     password_hash: Mapped[str] = mapped_column(String(60))
     is_active: Mapped[bool] = mapped_column(default=False)
+
+    slides: Mapped[List["SlidesMetaData"]] = relationship(
+        "SlidesMetaData", back_populates="owner"
+    )
