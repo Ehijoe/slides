@@ -17,8 +17,8 @@ def hash_password(password):
 # Check if the provided password matches the stored password (hashed)
 def verify_password(plain_password, hashed_password):
     password_byte_enc = bytes(plain_password, "utf-8")
-    hashed_password_bytes = bytes(hashed_password, "utf-8")
-    return bcrypt.checkpw(password = password_byte_enc , hashed_password = hashed_password_bytes)
+    
+    return bcrypt.checkpw(password = password_byte_enc, hashed_password = hashed_password)
 
 
 def create_jwt(user: User) -> str:
