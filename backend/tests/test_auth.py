@@ -1,14 +1,15 @@
 from fastapi.testclient import TestClient
 
-from src.main import app
+from backend.src.main import app
+from backend.tests.fixtures import use_mock_db
 
 client = TestClient(app)
 
 
-def test_signup_create_user():
+def test_signup_create_user(use_mock_db):
     response = client.post(
         "/auth/signup/",
-        json={"name": "Bazz", "email": "bazz@gmail.com" , "password": "Dropthebazz", "password_confirm": "Dropthebazz"},
+        json={"name": "Bazzi", "email": "bazz@gmail.com" , "password": "Dropthebazz", "password_confirm": "Dropthebazz"},
     )
 
     assert response.status_code == 200
@@ -18,10 +19,12 @@ def test_signup_create_user():
     assert response.json()["is_active"] == False
 
 
-def test_login_user():
+def test_login_user(use_mock_db):
     response = client.post(
         "/auth/login/",
         json={"email": "bazz@gmail.com" , "password": "Dropthebazz"},
     )
 
     assert response.status_code == 400
+    data = response.json()
+    assert data["detail"] == "Account inactive"
